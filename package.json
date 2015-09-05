@@ -24,6 +24,8 @@
     }
   },
   "dependencies": {
-    "DemaeBocco": "git+https://github.com/demaebocco/node_bocco.git"
+    "DemaeBocco": "git+https://github.com/demaebocco/node_bocco.git",
+    "body-parser": "^1.13.3",
+    "express": "^4.13.3"
   }
 }

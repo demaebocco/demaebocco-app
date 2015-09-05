@@ -1,5 +1,7 @@
 'use strict';
 
+var express = require('express');
+var bodyParser = require('body-parser');
 var EventEmitter = require('events').EventEmitter;
 var bocco = require('DemaeBocco');
 
@@ -31,17 +33,30 @@ var flow = (function () {
   return flow;
 })();
 
-flow.say('お昼どうする？おすすめのとんかつがあるよ？', true);
-flow.once('response', function (text) {
-  if (text === 'yes') {
+var run = function () {
+  flow.say('お昼どうする？おすすめのとんかつがあるよ？', true);
+  flow.once('response', function (text) {
+    if (text === 'yes') {
 
-    flow.order('注文お願いします。とんかつ一人前、さくらハウスまで');
-    flow.once('ordered', function (time) {
+      flow.order('注文お願いします。とんかつ一人前、さくらハウスまで');
+      flow.once('ordered', function (time) {
 
-      flow.say('１分後に届くよ！');
-      setTimeout(function () {
-        flow.say('もうすぐ届くよ！');
-      }, time * 60 * 1000);
-    });
-  }
-});
+        flow.say('１分後に届くよ！');
+        setTimeout(function () {
+          flow.say('もうすぐ届くよ！');
+        }, time * 60 * 1000);
+      });
+    }
+  });
+};
+
+var app = express();
+app.use(bodyParser());
+
+app
+  .get('/start', function (request, response) {
+    run();
+  });
+
+app.listen(3000, '0.0.0.0');
+console.log('Server runningat http://localhost:3000');
