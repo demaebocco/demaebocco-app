@@ -1,0 +1,29 @@
+{
+  "name": "demaebocco-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "browser": true,
+      "jquery": true,
+      "jasmine": true
+    },
+    "rules": {
+      "quotes": [
+        2,
+        "single"
+      ]
+    }
+  },
+  "dependencies": {
+    "DemaeBocco": "git+https://github.com/demaebocco/node_bocco.git"
+  }
+}
