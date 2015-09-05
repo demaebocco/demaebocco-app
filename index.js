@@ -56,6 +56,7 @@ app.use(bodyParser());
 app
   .get('/start', function (request, response) {
     run();
+    response.end();
   });
 
 app.listen(3000, '0.0.0.0');
