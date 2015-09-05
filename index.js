@@ -5,6 +5,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var EventEmitter = require('events').EventEmitter;
 var bocco = require('DemaeBocco');
+var jaCodeMap = require('jaCodeMap');
 var calling = require('./calling.js');
 
 var flow = (function () {
@@ -27,10 +28,9 @@ var flow = (function () {
 
     console.log('ORDER: ' + text); // eslint-disable-line no-console
     calling();
-
-    setImmediate(function () {
-      that.emit('ordered', 1);
-    });
+  };
+  flow.responseMinutes = function (minutes) {
+    this.emit('ordered', minutes);
   };
 
   return flow;
@@ -42,12 +42,11 @@ var run = function () {
     if (text === 'yes') {
 
       flow.order('注文お願いします。とんかつ一人前、さくらハウスまで');
-      flow.once('ordered', function (time) {
-
-        flow.say('１分後に届くよ！');
+      flow.once('ordered', function (minutes) {
+        flow.say(jaCodeMap.h2f(minutes + '分後に届くよ！'));
         setTimeout(function () {
           flow.say('もうすぐ届くよ！');
-        }, time * 60 * 1000);
+        }, minutes * 60 * 1000);
       });
     }
   });
@@ -67,13 +66,29 @@ app
     var data = request.body; 
     if (data.Digits) {
       console.log(data.Digits);
+      switch (data.Digits) {
+        case '1':
+          flow.responseMinutes(30);
+          break;
+        case '2':
+          flow.responseMinutes(45);
+          break;
+        case '3':
+          flow.responseMinutes(60);
+          break;
+        case '4':
+          flow.responseIgnore(60);
+          break;
+        case '9':
+          flow.responseMinutes(1);
+          break;
+      }
+      flow.responseMinutes(1);
     }
 
     var tml = fs.readFileSync('order.xml', 'utf8');
     response.send(tml);
   });
-
-
 
 app.listen(3000, '0.0.0.0');
 console.log('Server runningat http://localhost:3000');
