@@ -1,9 +1,11 @@
 'use strict';
 
+var fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 var EventEmitter = require('events').EventEmitter;
 var bocco = require('DemaeBocco');
+var calling = require('./calling.js');
 
 var flow = (function () {
   var events = {};
@@ -24,6 +26,7 @@ var flow = (function () {
     var that = this;
 
     console.log('ORDER: ' + text); // eslint-disable-line no-console
+    calling();
 
     setImmediate(function () {
       that.emit('ordered', 1);
@@ -57,7 +60,20 @@ app
   .get('/start', function (request, response) {
     run();
     response.end();
+  })
+  .post('/twilio/order', function (request, response) {
+    console.log('POST /twilio/order');
+    
+    var data = request.body; 
+    if (data.Digits) {
+      console.log(data.Digits);
+    }
+
+    var tml = fs.readFileSync('order.xml', 'utf8');
+    response.send(tml);
   });
+
+
 
 app.listen(3000, '0.0.0.0');
 console.log('Server runningat http://localhost:3000');
