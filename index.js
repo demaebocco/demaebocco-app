@@ -8,13 +8,29 @@ var bocco = require('DemaeBocco');
 var jaCodeMap = require('jaCodeMap');
 var calling = require('./calling.js');
 
-var flow = (function () {
+var boccoMock = (function () {
+  return {
+    postMessageText: function (text, callback) {
+      console.log('mock.say: ' + text);
+      callback && setImmediate(function () {
+        callback({});
+      });
+    },
+    getMessageMediaAudio: function (callback) {
+      callback && setImmediate(function () {
+        callback({});
+      });
+    }
+  };
+})();
+
+var makeFlow = function (bocco) {
   var events = {};
 
   var flow = new EventEmitter();
   flow.say = function (text, isCallback) {
-    bocco.postMessageText(text, function () {});
     console.log('SAY: ' + text); // eslint-disable-line no-console
+    bocco.postMessageText(text, function () {});
 
     if (isCallback) {
       var that = this;
@@ -34,9 +50,9 @@ var flow = (function () {
   };
 
   return flow;
-})();
+};
 
-var run = function () {
+var run = function (flow) {
   flow.say('お昼どうする？おすすめのとんかつがあるよ？', true);
   flow.once('response', function (text) {
     if (text === 'yes') {
@@ -57,9 +73,44 @@ app.use(bodyParser());
 
 app
   .get('/start', function (request, response) {
-    run();
+    run(makeFlow(bocco));
     response.end();
   })
+  .get('/mock', function (request, response) {
+    run(makeFlow(boccoMock));
+    response.end();
+  })
+  .post('/twilio/order', function (request, response) {
+    console.log('POST /twilio/order');
+    
+    var data = request.body; 
+    if (data.Digits) {
+      console.log(data.Digits);
+      switch (data.Digits) {
+        case '1':
+          flow.responseMinutes(30);
+          break;
+        case '2':
+          flow.responseMinutes(45);
+          break;
+        case '3':
+          flow.responseMinutes(60);
+          break;
+        case '4':
+          flow.responseIgnore(60);
+          break;
+        case '9':
+          flow.responseMinutes(1);
+          break;
+      }
+    }
+
+    var tml = fs.readFileSync('order.xml', 'utf8');
+    response.send(tml);
+  });
+
+app.listen(3000, '0.0.0.0');
+console.log('Server runningat http://localhost:3000');
   .post('/twilio/order', function (request, response) {
     console.log('POST /twilio/order');
     
