@@ -111,7 +111,21 @@ app
 
     var tml = fs.readFileSync('order.xml', 'utf8');
     response.send(tml);
-  });
+  })
+  .get('/real-order', function (request, response) {
+    require('./order.js')();
+
+    response.end();
+  })
+  .post('/twilio/real-order', function (request, response) {
+    console.log('POST /twilio/real-order');
+
+    var data = request.body;
+    console.log(data);
+
+    var tml = fs.readFileSync('real-order.xml', 'utf8');
+    response.send(tml);
+  })
 
 app.listen(3000, '0.0.0.0');
 console.log('Server runningat http://localhost:3000');
