@@ -4,10 +4,13 @@ var fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 var EventEmitter = require('events').EventEmitter;
+var _ = require('underscore');
 var bocco = require('DemaeBocco');
 var kintone = require('node_kintone');
 var jaCodeMap = require('jaCodeMap');
 var calling = require('./calling.js');
+
+var orderMessage;
 
 var boccoMock = (function () {
   return {
@@ -50,6 +53,7 @@ var makeFlow = function (bocco) {
     var that = this;
 
     console.log('ORDER: ' + text); // eslint-disable-line no-console
+    orderMessage = text;
     calling();
   };
   flow.responseMinutes = function (minutes) {
@@ -89,7 +93,7 @@ var run = function (flow) {
       console.log(text);
       if (text.indexOf('はい') >= 0) {
 
-        flow.order('注文お願いします。とんかつ一人前、さくらハウスまで');
+        flow.order('ご注文をお願いします。' + food + '一人前。さくらハウスで。30分なら1を、45分なら2を、60分なら3を、無理なら4を押してください。');
         flow.once('ordered', function (minutes) {
           if (minutes) {
             flow.say(jaCodeMap.h2f(minutes + '分後に届くよ！'));
@@ -148,7 +152,8 @@ app
       }
     }
 
-    var tml = fs.readFileSync('order.xml', 'utf8');
+    var template = _.template(fs.readFileSync('order.xml', 'utf8'));
+    var tml = template({message: orderMessage});
     response.send(tml);
   });
 

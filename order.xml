@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Response>
     <Gather timeout="10" finishOnKey="*">
-        <Say language="ja-jp">ご注文をお願いします。とんかつ一人前。さくらハウスで。30分なら1を、45分なら2を、60分なら3を、無理なら4を押してください。</Say>
+        <Say language="ja-jp"><%- message %></Say>
     </Gather>
 </Response>
