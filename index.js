@@ -111,35 +111,3 @@ app
 
 app.listen(3000, '0.0.0.0');
 console.log('Server runningat http://localhost:3000');
-  .post('/twilio/order', function (request, response) {
-    console.log('POST /twilio/order');
-    
-    var data = request.body; 
-    if (data.Digits) {
-      console.log(data.Digits);
-      switch (data.Digits) {
-        case '1':
-          flow.responseMinutes(30);
-          break;
-        case '2':
-          flow.responseMinutes(45);
-          break;
-        case '3':
-          flow.responseMinutes(60);
-          break;
-        case '4':
-          flow.responseIgnore(60);
-          break;
-        case '9':
-          flow.responseMinutes(1);
-          break;
-      }
-      flow.responseMinutes(1);
-    }
-
-    var tml = fs.readFileSync('order.xml', 'utf8');
-    response.send(tml);
-  });
-
-app.listen(3000, '0.0.0.0');
-console.log('Server runningat http://localhost:3000');
