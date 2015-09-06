@@ -35,11 +35,13 @@ var makeFlow = function (bocco) {
     if (isCallback) {
       var that = this;
       bocco.getMessageMediaAudio(function (json) {
-        bocco.wav2text(json.audio,
-                       'AIzaSyAFltwcHvvnDCYDwo6fezLntFeHFrSXL70',
-                       function (text) {
-                         that.emit('response', text);
-                       });
+        setTimeout(function () {
+          bocco.wav2text(json.audio,
+                         'AIzaSyAFltwcHvvnDCYDwo6fezLntFeHFrSXL70',
+                         function (text) {
+                           that.emit('response', text);
+                         });
+        }, 3000);
       });
     }
   };
@@ -59,15 +61,22 @@ var makeFlow = function (bocco) {
 var run = function (flow) {
   flow.say('お昼どうする？おすすめのとんかつがあるよ？', true);
   flow.once('response', function (text) {
-    if (text === 'はい') {
+    console.log(text);
+    if (text.indexOf('はい') >= 0) {
 
       flow.order('注文お願いします。とんかつ一人前、さくらハウスまで');
       flow.once('ordered', function (minutes) {
-        flow.say(jaCodeMap.h2f(minutes + '分後に届くよ！'));
-        setTimeout(function () {
-          flow.say('もうすぐ届くよ！');
-        }, minutes * 60 * 1000);
+        if (minutes) {
+          flow.say(jaCodeMap.h2f(minutes + '分後に届くよ！'));
+          setTimeout(function () {
+            flow.say('もうすぐ届くよ！');
+          }, minutes * 60 * 1000);
+        } else {
+          flow.say('たまには外に出ろ！');
+        }
       });
+    } else {
+      flow.say('そうかあー');
     }
   });
 };
@@ -105,7 +114,7 @@ app
           flow.responseMinutes(60);
           break;
         case '4':
-          flow.responseIgnore(60);
+          flow.responseMinutes(0);
           break;
         case '9':
           flow.responseMinutes(1);
