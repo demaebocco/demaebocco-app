@@ -5,6 +5,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var EventEmitter = require('events').EventEmitter;
 var bocco = require('DemaeBocco');
+var kintone = require('node_kintone');
 var jaCodeMap = require('jaCodeMap');
 var calling = require('./calling.js');
 
@@ -58,26 +59,51 @@ var makeFlow = function (bocco) {
   return flow;
 };
 
-var run = function (flow) {
-  flow.say('お昼どうする？おすすめのとんかつがあるよ？', true);
-  flow.once('response', function (text) {
-    console.log(text);
-    if (text.indexOf('はい') >= 0) {
+var getFoods = function (callback) {
+  var subdomain = "tf-web";
+  var loginName = "t_furu@tf-web.jp";
+  var passwd 　　= "y8sgFJir";
+  var api_token = "koGrXyWGLS9PMKT65sg3eScSfDHGYxYt3TPP5UAd";
+  kintone.setAccount(subdomain,loginName,passwd,api_token);
 
-      flow.order('注文お願いします。とんかつ一人前、さくらハウスまで');
-      flow.once('ordered', function (minutes) {
-        if (minutes) {
-          flow.say(jaCodeMap.h2f(minutes + '分後に届くよ！'));
-          setTimeout(function () {
-            flow.say('もうすぐ届くよ！');
-          }, minutes * 60 * 1000);
-        } else {
-          flow.say('たまには外に出ろ！');
-        }
-      });
-    } else {
-      flow.say('そうかあー');
-    }
+  kintone.getRecords(14, null, null, null, function (json) {
+    var data = json.records.map(function (line) {
+      return line['文字列__1行_'].value;
+    });
+    callback && callback(data);
+  });
+};
+
+var chooseFood = function (callback) {
+  getFoods(function (data) {
+    var index = Math.floor(Math.random() * data.length);
+    var food = data[index];
+    callback && callback(food);
+  });
+};
+
+var run = function (flow) {
+  chooseFood(function (food) {
+    flow.say('お昼どうする？おすすめの' + food + 'があるよ？', true);
+    flow.once('response', function (text) {
+      console.log(text);
+      if (text.indexOf('はい') >= 0) {
+
+        flow.order('注文お願いします。とんかつ一人前、さくらハウスまで');
+        flow.once('ordered', function (minutes) {
+          if (minutes) {
+            flow.say(jaCodeMap.h2f(minutes + '分後に届くよ！'));
+            setTimeout(function () {
+              flow.say('もうすぐ届くよ！');
+            }, minutes * 60 * 1000);
+          } else {
+            flow.say('たまには外に出ろ！');
+          }
+        });
+      } else {
+        flow.say('そうかあー');
+      }
+    });
   });
 };
 
