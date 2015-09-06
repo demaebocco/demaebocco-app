@@ -35,7 +35,11 @@ var makeFlow = function (bocco) {
     if (isCallback) {
       var that = this;
       bocco.getMessageMediaAudio(function (json) {
-        that.emit('response', 'yes');
+        bocco.wav2text(json.audio,
+                       'AIzaSyAFltwcHvvnDCYDwo6fezLntFeHFrSXL70',
+                       function (text) {
+                         that.emit('response', text);
+                       });
       });
     }
   };
@@ -55,7 +59,7 @@ var makeFlow = function (bocco) {
 var run = function (flow) {
   flow.say('お昼どうする？おすすめのとんかつがあるよ？', true);
   flow.once('response', function (text) {
-    if (text === 'yes') {
+    if (text === 'はい') {
 
       flow.order('注文お願いします。とんかつ一人前、さくらハウスまで');
       flow.once('ordered', function (minutes) {
