@@ -71,13 +71,17 @@ var run = function (flow) {
 var app = express();
 app.use(bodyParser());
 
+var flow;
+
 app
   .get('/start', function (request, response) {
-    run(makeFlow(bocco));
+    flow = makeFlow(bocco);
+    run(flow);
     response.end();
   })
   .get('/mock', function (request, response) {
-    run(makeFlow(boccoMock));
+    flow = makeFlow(boccoMock);
+    run(flow);
     response.end();
   })
   .post('/twilio/order', function (request, response) {
