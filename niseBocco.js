@@ -3,26 +3,23 @@
 var EventEmitter = require('events');
 var util = require('util');
 var MilkCocoa = require('milkcocoa');
+var Nise = require('./nise.js');
 
 var sender = 'DemaeBocco';
 
 function NiseBocco (name) {
-  var milkcocoa = new MilkCocoa('hotif8ab67j.mlkcca.com');
-  var dataStore = this.dataStore = milkcocoa.dataStore('nise/' + name);
-
+  var nise = this.nise = new Nise(name);
   var that = this;
 
-  dataStore.on('send', function (data) {
-    if (data.value.sender !== sender) {
-      that.emit('response', data.value.text);
-    }
+  nise.on('response', function (text) {
+    that.emit('response', text);
   });
 }
 
 util.inherits(NiseBocco, EventEmitter);
 
 NiseBocco.prototype.send = function (text) {
-  this.dataStore.send({text: text, sender: sender});
+  this.nise.send(text);
 };
 
 module.exports = NiseBocco;
