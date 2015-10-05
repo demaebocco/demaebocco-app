@@ -28,6 +28,7 @@
     "body-parser": "^1.13.3",
     "express": "^4.13.3",
     "jaCodeMap": "0.0.4",
+    "milkcocoa": "^0.1.2",
     "twilio": "^2.3.0",
     "underscore": "^1.8.3"
   }

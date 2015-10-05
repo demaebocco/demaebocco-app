@@ -5,28 +5,15 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var EventEmitter = require('events').EventEmitter;
 var _ = require('underscore');
-var bocco = require('DemaeBocco');
+var Bocco = require('./bocco.js');
+var bocco = new Bocco();
+var NiseBocco = require('./niseBocco.js');
+var niseBocco = new NiseBocco('#Boccoさくらハウス');
 var kintone = require('node_kintone');
 var jaCodeMap = require('jaCodeMap');
 var calling = require('./calling.js');
 
 var orderMessage;
-
-var boccoMock = (function () {
-  return {
-    postMessageText: function (text, callback) {
-      console.log('mock.say: ' + text);
-      callback && setImmediate(function () {
-        callback({});
-      });
-    },
-    getMessageMediaAudio: function (callback) {
-      callback && setImmediate(function () {
-        callback({});
-      });
-    }
-  };
-})();
 
 var makeFlow = function (bocco) {
   var events = {};
@@ -34,18 +21,12 @@ var makeFlow = function (bocco) {
   var flow = new EventEmitter();
   flow.say = function (text, isCallback) {
     console.log('SAY: ' + text); // eslint-disable-line no-console
-    bocco.postMessageText(text, function () {});
+    bocco.send(text);
 
     if (isCallback) {
       var that = this;
-      bocco.getMessageMediaAudio(function (json) {
-        setTimeout(function () {
-          bocco.wav2text(json.audio,
-                         'AIzaSyAFltwcHvvnDCYDwo6fezLntFeHFrSXL70',
-                         function (text) {
-                           that.emit('response', text);
-                         });
-        }, 3000);
+      bocco.once('response', function (text) {
+        that.emit('response', text);
       });
     }
   };
@@ -123,14 +104,14 @@ app
     response.end();
   })
   .get('/mock', function (request, response) {
-    flow = makeFlow(boccoMock);
+    flow = makeFlow(niseBocco);
     run(flow);
     response.end();
   })
   .post('/twilio/order', function (request, response) {
     console.log('POST /twilio/order');
-    
-    var data = request.body; 
+
+    var data = request.body;
     if (data.Digits) {
       console.log(data.Digits);
       switch (data.Digits) {
