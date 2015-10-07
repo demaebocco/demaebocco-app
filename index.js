@@ -22,7 +22,7 @@ var calling = require('./calling.js');
 
 var orderMessage;
 
-var makeFlow = function (bocco, restaurant, flowChooser) {
+var makeFlow = function (bocco, restaurant, foodChooser) {
   var events = {};
 
   var flow = new EventEmitter();
@@ -46,19 +46,19 @@ var makeFlow = function (bocco, restaurant, flowChooser) {
     restaurant.once('response', function (text) {
       switch (text) {
       case '1':
-        this.responseMinutes(30);
+        that.responseMinutes(30);
         break;
       case '2':
-        this.responseMinutes(45);
+        that.responseMinutes(45);
         break;
       case '3':
-        this.responseMinutes(60);
+        that.responseMinutes(60);
         break;
       case '4':
-        this.responseMinutes(0);
+        that.responseMinutes(0);
         break;
       case '9':
-        this.responseMinutes(1);
+        that.responseMinutes(1);
         break;
       }
     });
