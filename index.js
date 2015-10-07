@@ -9,13 +9,17 @@ var Bocco = require('./bocco.js');
 var bocco = new Bocco();
 var NiseBocco = require('./niseBocco.js');
 var niseBocco = new NiseBocco('#Boccoさくらハウス');
+var Restaurant = require('./restaurant.js');
+var restaurant = new Restaurant();
+var NiseRestaurant = require('./niseRestaurant.js');
+var niseRestaurant = new NiseRestaurant('@銀のさら宇宿店');
 var kintone = require('node_kintone');
 var jaCodeMap = require('jaCodeMap');
 var calling = require('./calling.js');
 
 var orderMessage;
 
-var makeFlow = function (bocco) {
+var makeFlow = function (bocco, restaurant) {
   var events = {};
 
   var flow = new EventEmitter();
@@ -34,8 +38,27 @@ var makeFlow = function (bocco) {
     var that = this;
 
     console.log('ORDER: ' + text); // eslint-disable-line no-console
-    orderMessage = text;
-    calling();
+
+    restaurant.order(text);
+    Restaurant.on('response', function (text) {
+      switch (text) {
+      case '1':
+        this.responseMinutes(30);
+        break;
+      case '2':
+        this.responseMinutes(45);
+        break;
+      case '3':
+        this.responseMinutes(60);
+        break;
+      case '4':
+        this.responseMinutes(0);
+        break;
+      case '9':
+        this.responseMinutes(1);
+        break;
+      }
+    });
   };
   flow.responseMinutes = function (minutes) {
     this.emit('ordered', minutes);
@@ -99,44 +122,16 @@ var flow;
 
 app
   .get('/start', function (request, response) {
-    flow = makeFlow(bocco);
+    flow = makeFlow(bocco, restaurant);
     run(flow);
     response.end();
   })
   .get('/mock', function (request, response) {
-    flow = makeFlow(niseBocco);
+    flow = makeFlow(niseBocco, niseRestaurant);
     run(flow);
     response.end();
-  })
-  .post('/twilio/order', function (request, response) {
-    console.log('POST /twilio/order');
-
-    var data = request.body;
-    if (data.Digits) {
-      console.log(data.Digits);
-      switch (data.Digits) {
-        case '1':
-          flow.responseMinutes(30);
-          break;
-        case '2':
-          flow.responseMinutes(45);
-          break;
-        case '3':
-          flow.responseMinutes(60);
-          break;
-        case '4':
-          flow.responseMinutes(0);
-          break;
-        case '9':
-          flow.responseMinutes(1);
-          break;
-      }
-    }
-
-    var template = _.template(fs.readFileSync('order.xml', 'utf8'));
-    var tml = template({message: orderMessage});
-    response.send(tml);
   });
+restaurant.registerTwilio(app);
 
 app.listen(3000, '0.0.0.0');
 console.log('Server runningat http://localhost:3000');
