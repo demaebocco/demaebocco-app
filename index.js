@@ -13,13 +13,16 @@ var Restaurant = require('./restaurant.js');
 var restaurant = new Restaurant();
 var NiseRestaurant = require('./niseRestaurant.js');
 var niseRestaurant = new NiseRestaurant('@銀のさら宇宿店');
-var kintone = require('node_kintone');
+var FoodChooser = require('./foodChooser.js');
+var foodChooser = new FoodChooser();
+var NiseFoodChooser = require('./niseFoodChooser.js');
+var niseFoodChooser = new NiseFoodChooser();
 var jaCodeMap = require('jaCodeMap');
 var calling = require('./calling.js');
 
 var orderMessage;
 
-var makeFlow = function (bocco, restaurant) {
+var makeFlow = function (bocco, restaurant, flowChooser) {
   var events = {};
 
   var flow = new EventEmitter();
@@ -40,7 +43,7 @@ var makeFlow = function (bocco, restaurant) {
     console.log('ORDER: ' + text); // eslint-disable-line no-console
 
     restaurant.order(text);
-    Restaurant.on('response', function (text) {
+    restaurant.once('response', function (text) {
       switch (text) {
       case '1':
         this.responseMinutes(30);
@@ -64,55 +67,37 @@ var makeFlow = function (bocco, restaurant) {
     this.emit('ordered', minutes);
   };
 
+  flow.chooseFood = function () {
+    return foodChooser.choose();
+  };
+
   return flow;
 };
 
-var getFoods = function (callback) {
-  var subdomain = "tf-web";
-  var loginName = "t_furu@tf-web.jp";
-  var passwd 　　= "y8sgFJir";
-  var api_token = "koGrXyWGLS9PMKT65sg3eScSfDHGYxYt3TPP5UAd";
-  kintone.setAccount(subdomain,loginName,passwd,api_token);
-
-  kintone.getRecords(14, null, null, null, function (json) {
-    var data = json.records.map(function (line) {
-      return line['文字列__1行_'].value;
-    });
-    callback && callback(data);
-  });
-};
-
-var chooseFood = function (callback) {
-  getFoods(function (data) {
-    var index = Math.floor(Math.random() * data.length);
-    var food = data[index];
-    callback && callback(food);
-  });
-};
-
 var run = function (flow) {
-  chooseFood(function (food) {
-    flow.say('お昼どうする？おすすめの' + food + 'があるよ？', true);
-    flow.once('response', function (text) {
-      console.log(text);
-      if (text.indexOf('はい') >= 0) {
+  flow.chooseFood()
+    .then(function (food) {
+      flow.say('お昼どうする？おすすめの' + food + 'があるよ？', true);
+      flow.once('response', function (text) {
+        console.log(text);
+        if (text.indexOf('はい') >= 0) {
 
-        flow.order('ご注文をお願いします。' + food + '一人前。さくらハウスで。30分なら1を、45分なら2を、60分なら3を、無理なら4を押してください。');
-        flow.once('ordered', function (minutes) {
-          if (minutes) {
-            flow.say(jaCodeMap.h2f(minutes + '分後に届くよ！'));
-            setTimeout(function () {
-              flow.say('もうすぐ届くよ！');
-            }, minutes * 60 * 1000);
-          } else {
-            flow.say('たまには外に出ろ！');
-          }
-        });
-      } else {
-        flow.say('そうかあー');
-      }
+          flow.order('ご注文をお願いします。' + food + '一人前。さくらハウスで。30分なら1を、45分なら2を、60分なら3を、無理なら4を押してください。');
+          flow.once('ordered', function (minutes) {
+            if (minutes) {
+              flow.say(jaCodeMap.h2f(minutes + '分後に届くよ！'));
+              setTimeout(function () {
+                flow.say('もうすぐ届くよ！');
+              }, minutes * 60 * 1000);
+            } else {
+              flow.say('たまには外に出ろ！');
+            }
+          });
+        } else {
+          flow.say('そうかあー');
+        }
+      });
     });
-  });
 };
 
 var app = express();
@@ -122,12 +107,12 @@ var flow;
 
 app
   .get('/start', function (request, response) {
-    flow = makeFlow(bocco, restaurant);
+    flow = makeFlow(bocco, restaurant, foodChooser);
     run(flow);
     response.end();
   })
   .get('/mock', function (request, response) {
-    flow = makeFlow(niseBocco, niseRestaurant);
+    flow = makeFlow(niseBocco, niseRestaurant, niseFoodChooser);
     run(flow);
     response.end();
   });
