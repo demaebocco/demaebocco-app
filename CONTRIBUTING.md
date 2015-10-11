@@ -17,6 +17,27 @@ npm start
 実行されたら、`http://localhost:3000` をブラウザーで開いてください。
 
 
+## 設定
+設定で Bocco などの出力先を変更できます。`config.json` ファイルを作成してください。(修正後はアプリの再起動をおねがいします)
+
+```json
+{
+  "bocco": {
+    "type": "niseBocco",
+    "options": {
+      "name": "#Bocco政倉"
+    }
+  },
+  "restaurant": {
+    "type": "niseRestaurant",
+    "options": {
+      "name": "@銀のさら政倉店"
+    }
+  }
+}
+```
+
+
 ## 備考
 現在は、Bocco の実機や店舗への電話はかけません。テキストメッセージのみのやり取りなので、すぐに試すことができます。
 
