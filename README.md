@@ -1,22 +1,3 @@
-# How to use
-
-Setup.
-
-```
-git clone git@github.com:demaebocco/demaebocco-app.git
-cd demaebocco-app
-npm install
-```
-
-Run.
-
-```
-npm start
-```
-
-`open http://localhost:3000`
-
-
 # ロボットがランチメニューを提案し、出前を取ってくれる未来のサービス
 (DemaeBocco by Team DemaeBocco)
 
@@ -150,3 +131,7 @@ DemaeBoccoは、ほんの少しだけ未来の、出前サービスです。
 
 このサービス手法により、パソコンやスマホといったインターフェースを介する必要が無くなりますので、お子さんやご年配の方、パソコンやネットに敷居の高さを感じておられる方等、これまでwebサービスに接触する機会の無かった方々へのアプローチが可能となります。
 ```
+
+
+## 開発者向け
+[CONTRIBUTING.md](CONTRIBUTING.md)を参照してセットアップして実行してください。
