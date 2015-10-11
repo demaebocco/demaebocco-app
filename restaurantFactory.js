@@ -1,8 +1,6 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
+var config = require('./configReader.js').read();
 
 var factory = {
   'restaurant': function () {

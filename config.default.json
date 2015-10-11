@@ -1,0 +1,19 @@
+{
+  "bocco": {
+    "type": "niseBocco",
+    "options": {
+      "name": "#Boccoさくらハウス"
+    }
+  },
+  "restaurant": {
+    "type": "niseRestaurant",
+    "options": {
+      "name": "@銀のさら宇宿店"
+    }
+  },
+  "foodChooser": {
+    "type": "niseFoodChooser",
+    "options": {
+    }
+  }
+}
