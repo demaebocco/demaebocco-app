@@ -96,6 +96,9 @@ app.use(bodyParser());
 var flow;
 
 app
+  .get('/', function (request, response) {
+    require('./showHtml.js').run(request, response);
+  })
   .get('/start', function (request, response) {
     flow = makeFlow(bocco, restaurant, foodChooser);
     run(flow);

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <title>出前 Bocco</title>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script>
+      function start() {
+        $.get('start');
+      }
+
+      $(document).on('click', '#start', start);
+    </script>
+  </head>
+  <body>
+    <h1>出前 Bocco</h1>
+    <button id="start" type="button">お昼どうする?</button>
+  </body>
+</html>
