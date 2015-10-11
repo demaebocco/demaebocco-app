@@ -7,7 +7,6 @@ var _ = require('underscore');
 var bocco = require('./boccoFactory.js').create();
 var restaurant = require('./restaurantFactory.js').create();
 var foodChooser = require('./foodChooserFactory.js').create();
-var calling = require('./calling.js');
 var scenario = require('./scenario.js');
 
 var orderMessage;
