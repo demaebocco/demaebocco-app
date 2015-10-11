@@ -9,4 +9,8 @@ NiseFoodChooser.prototype.choose = function () {
   });
 };
 
+NiseFoodChooser.prototype.getDescription = function () {
+  return 'ニセお昼ごはん選び ("とんかつ"だけを返します)';
+};
+
 module.exports = NiseFoodChooser;

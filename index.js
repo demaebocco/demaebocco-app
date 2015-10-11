@@ -97,7 +97,11 @@ var flow;
 
 app
   .get('/', function (request, response) {
-    require('./showHtml.js').run(request, response);
+    require('./showHtml.js').run(request, response, {
+      bocco: bocco,
+      restaurant: restaurant,
+      foodChooser: foodChooser
+    });
   })
   .get('/start', function (request, response) {
     flow = makeFlow(bocco, restaurant, foodChooser);
