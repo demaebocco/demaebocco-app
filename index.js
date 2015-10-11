@@ -1,22 +1,12 @@
 'use strict';
 
-var fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 var EventEmitter = require('events').EventEmitter;
 var _ = require('underscore');
-var Bocco = require('./bocco.js');
-var bocco = new Bocco();
-var NiseBocco = require('./niseBocco.js');
-var niseBocco = new NiseBocco('#Boccoさくらハウス');
-var Restaurant = require('./restaurant.js');
-var restaurant = new Restaurant();
-var NiseRestaurant = require('./niseRestaurant.js');
-var niseRestaurant = new NiseRestaurant('@銀のさら宇宿店');
-var FoodChooser = require('./foodChooser.js');
-var foodChooser = new FoodChooser();
-var NiseFoodChooser = require('./niseFoodChooser.js');
-var niseFoodChooser = new NiseFoodChooser();
+var bocco = require('./boccoFactory.js').create();
+var restaurant = require('./restaurantFactory.js').create();
+var foodChooser = require('./foodChooserFactory.js').create();
 var jaCodeMap = require('jaCodeMap');
 var calling = require('./calling.js');
 
@@ -108,11 +98,6 @@ var flow;
 app
   .get('/start', function (request, response) {
     flow = makeFlow(bocco, restaurant, foodChooser);
-    run(flow);
-    response.end();
-  })
-  .get('/mock', function (request, response) {
-    flow = makeFlow(niseBocco, niseRestaurant, niseFoodChooser);
     run(flow);
     response.end();
   });
