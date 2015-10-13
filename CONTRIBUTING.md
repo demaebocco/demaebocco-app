@@ -38,6 +38,21 @@ npm start
 ```
 
 
+### Bocco を使う
+設定によって Bocco の実機を使うことができます。
+
+```json
+{
+  "bocco": {
+    "type": "bocco",
+    "options": {
+      "roomId": "Your room id",
+      "accessToken": "your access token"
+    }
+  }
+}
+```
+
 ## 備考
 現在は、Bocco の実機や店舗への電話はかけません。テキストメッセージのみのやり取りなので、すぐに試すことができます。
 

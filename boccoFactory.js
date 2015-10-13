@@ -3,9 +3,9 @@
 var config = require('./configReader.js').read();
 
 var factory = {
-  'bocco': function () {
+  'bocco': function (options) {
     var Bocco = require('./bocco.js');
-    return new Bocco();
+    return new Bocco(options.roomId, options.accessToken);
   },
   'niseBocco': function (options) {
     var NiseBocco = require('./niseBocco.js');
