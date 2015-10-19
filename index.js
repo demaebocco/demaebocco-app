@@ -7,7 +7,6 @@ var _ = require('underscore');
 var bocco = require('./boccoFactory.js').create();
 var restaurant = require('./restaurantFactory.js').create();
 var foodChooser = require('./foodChooserFactory.js').create();
-var scenario = require('./scenario.js');
 
 var orderMessage;
 
@@ -78,7 +77,12 @@ app
   })
   .get('/start', function (request, response) {
     flow = makeFlow(bocco, restaurant, foodChooser);
-    scenario.run(flow);
+    require('./scenario.js').run(flow);
+    response.end();
+  })
+  .get('/start-b', function (request, response) {
+    flow = makeFlow(bocco, restaurant, foodChooser);
+    require('./scenario-b.js').run(flow);
     response.end();
   });
 restaurant.registerTwilio(app);

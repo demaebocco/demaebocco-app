@@ -9,7 +9,12 @@
         $.get('start');
       }
 
+      function startB() {
+        $.get('start-b');
+      }
+
       $(document).on('click', '#start', start);
+      $(document).on('click', '#start-b', startB);
     </script>
   </head>
   <body>
@@ -22,6 +27,14 @@
       <p>
         お昼どうする? 美味しいとんかつがあるよ? 注文の流れ。
         <button id="start" type="button">お昼どうする?</button>
+      </p>
+    </section>
+
+    <section>
+      <h3>近所のレストランを教える機能</h3>
+      <p>
+        ぐるなびレストラン検索APIを使って、近所のおすすめの店を教えてくれる。
+        <button id="start-b" type="button">お昼どうする?</button>
       </p>
     </section>
 
