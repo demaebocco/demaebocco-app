@@ -7,21 +7,56 @@ var WordSplitter = require('./wordSplitter.js');
 
 var splitter = new WordSplitter('dj0zaiZpPUNna3RLOUE5Rk1HTSZzPWNvbnN1bWVyc2VjcmV0Jng9OWQ-');
 
+var getType = function (words) {
+  var index = words.indexOf('外');
+  if (index >= 0) {
+    return {
+      index: index,
+      type: '外'
+    };
+  }
+  index = words.indexOf('出前');
+  if (index > 0) {
+    return {
+      index: index,
+      type: '出前'
+    };
+  }
+
+  return false;
+};
+
+var analyze = function (text, callback) {
+  splitter.split(text, function (words) {
+    // 名詞だけ抽出
+    var nouns = words
+          .filter(function (word) {
+            return word.pos === '名詞';
+          })
+          .map(function (word) {
+            return word.surface;
+          });
+
+    // '外' とか '出前' を探す
+    var type = getType(words);
+    var food;
+    if (type) {
+      // '外' とか '出前' とかの次の名詞を食べ物と判断する
+      type.food = words[type.index + 1];
+    }
+
+    callback(type);
+  });
+};
+
 var run = function (flow) {
   flow.say('お昼どうする？', true);
   flow.once('response', function (text) {
-    splitter.split(text, function (words) {
-      var texts = words
-            .filter(function (word) { return word.pos === '名詞'; })
-            .map(function (word) { return word.surface; });
-      if (texts.indexOf('外') >= 0) {
-        var index = texts.indexOf('外');
-        var food = texts[index + 1];
-        flow.say('おすすめの' + food + 'があるよ？いってらっしゃい。');
-      } else if (texts.indexOf('出前') >= 0) {
-        var index = texts.indexOf('出前');
-        var food = texts[index + 1];
-        flow.say('おすすめの' + food + 'があるよ？', true);
+    analyze(text, function (type) {
+      if (type.type === '外') {
+        flow.say('おすすめの' + type.food + 'があるよ？いってらっしゃい。');
+      } else if (type.type === '出前') {
+        flow.say('おすすめの' + type.food + 'があるよ？', true);
         flow.once('response', function (text) {
           console.log(text);
           if (text.indexOf('はい') >= 0) {
