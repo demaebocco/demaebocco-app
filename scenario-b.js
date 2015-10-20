@@ -31,7 +31,7 @@ var run = function (flow) {
       if (texts.indexOf('外') >= 0) {
         var index = texts.indexOf('外');
         var food = texts[index + 1];
-        flow.sa('おすすめの' + food + 'があるよ？いってらっしゃい。');
+        flow.say('おすすめの' + food + 'があるよ？いってらっしゃい。');
       } else if (texts.indexOf('出前') >= 0) {
         var index = texts.indexOf('出前');
         var food = texts[index + 1];
