@@ -3,28 +3,14 @@
 var request = require('request');
 var xml2json = require('xml2json');
 var jaCodeMap = require('jaCodeMap');
+var WordSplitter = require('./wordSplitter.js');
 
-var url = 'http://jlp.yahooapis.jp/MAService/V1/parse?appid=dj0zaiZpPUNna3RLOUE5Rk1HTSZzPWNvbnN1bWVyc2VjcmV0Jng9OWQ-';
-
-function splitWords(text, callback) {
-    request
-      .post({
-        url: url,
-        form: {
-          sentence: text
-        }
-      }, function (error, response, body) {
-        var result = JSON.parse(xml2json.toJson(body));
-        console.log(result);
-        callback(result.ResultSet['ma_result']['word_list'].word);
-      });
-
-}
+var splitter = new WordSplitter('dj0zaiZpPUNna3RLOUE5Rk1HTSZzPWNvbnN1bWVyc2VjcmV0Jng9OWQ-');
 
 var run = function (flow) {
   flow.say('お昼どうする？', true);
   flow.once('response', function (text) {
-    splitWords(text, function (words) {
+    splitter.split(text, function (words) {
       var texts = words
             .filter(function (word) { return word.pos === '名詞'; })
             .map(function (word) { return word.surface; });
