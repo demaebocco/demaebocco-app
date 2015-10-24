@@ -8,6 +8,7 @@ var WordSplitter = require('./wordSplitter.js');
 var splitter = new WordSplitter('dj0zaiZpPUNna3RLOUE5Rk1HTSZzPWNvbnN1bWVyc2VjcmV0Jng9OWQ-');
 
 var getType = function (words) {
+  console.log(words);
   var index = words.indexOf('外');
   if (index >= 0) {
     return {
@@ -16,7 +17,7 @@ var getType = function (words) {
     };
   }
   index = words.indexOf('出前');
-  if (index > 0) {
+  if (index >= 0) {
     return {
       index: index,
       type: '出前'
@@ -38,11 +39,11 @@ var analyze = function (text, callback) {
           });
 
     // '外' とか '出前' を探す
-    var type = getType(words);
+    var type = getType(nouns);
     var food;
     if (type) {
       // '外' とか '出前' とかの次の名詞を食べ物と判断する
-      type.food = words[type.index + 1];
+      type.food = nouns[type.index + 1];
     }
 
     callback(type);
@@ -53,6 +54,7 @@ var run = function (flow) {
   flow.say('お昼どうする？', true);
   flow.once('response', function (text) {
     analyze(text, function (type) {
+      console.log(type);
       if (type.type === '外') {
         flow.say('おすすめの' + type.food + 'があるよ？いってらっしゃい。');
       } else if (type.type === '出前') {
@@ -61,7 +63,7 @@ var run = function (flow) {
           console.log(text);
           if (text.indexOf('はい') >= 0) {
 
-            flow.order('ご注文をお願いします。' + food + '一人前。さくらハウスで。30分なら1を、45分なら2を、60分なら3を、無理なら4を押してください。');
+            flow.order('ご注文をお願いします。' + type.food + '一人前。さくらハウスで。30分なら1を、45分なら2を、60分なら3を、無理なら4を押してください。');
             flow.once('ordered', function (minutes) {
               if (minutes) {
                 flow.say(jaCodeMap.h2f(minutes + '分後に届くよ！'));
