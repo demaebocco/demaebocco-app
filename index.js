@@ -7,10 +7,11 @@ var _ = require('underscore');
 var bocco = require('./boccoFactory.js').create();
 var restaurant = require('./restaurantFactory.js').create();
 var foodChooser = require('./foodChooserFactory.js').create();
+var restaurantChooser = require('./restaurantChooserFactory.js').create();
 
 var orderMessage;
 
-var makeFlow = function (bocco, restaurant, foodChooser) {
+var makeFlow = function (bocco, restaurant, foodChooser, restaurantChooser) {
   var events = {};
 
   var flow = new EventEmitter();
@@ -59,6 +60,10 @@ var makeFlow = function (bocco, restaurant, foodChooser) {
     return foodChooser.choose();
   };
 
+  flow.chooseRestaurant = function (condition) {
+    return restaurantChooser.choose(condition);
+  };
+
   return flow;
 };
 
@@ -76,12 +81,12 @@ app
     });
   })
   .get('/start', function (request, response) {
-    flow = makeFlow(bocco, restaurant, foodChooser);
+    flow = makeFlow(bocco, restaurant, foodChooser, restaurantChooser);
     require('./scenario.js').run(flow);
     response.end();
   })
   .get('/start-b', function (request, response) {
-    flow = makeFlow(bocco, restaurant, foodChooser);
+    flow = makeFlow(bocco, restaurant, foodChooser, restaurantChooser);
     require('./scenario-b.js').run(flow);
     response.end();
   });

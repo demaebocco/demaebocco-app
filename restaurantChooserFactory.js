@@ -1,0 +1,25 @@
+'use strict';
+
+var config = require('./configReader.js').read();
+
+var factory = {
+  'niseRestaurantChooser': function () {
+    var NiseRestaurantChooser = require('./niseRestaurantChooser.js');
+    return new NiseRestaurantChooser();
+  },
+  'gNaviRestaurantChooser': function (options) {
+    var GNaviRestaurantChooser = require('./gNaviRestaurantChooser.js');
+    return new GNaviRestaurantChooser(options.accessKey);
+  }
+};
+
+function create(optType, optOptions) {
+  var type = optType || config.restaurantChooser.type;
+  var options = optOptions || config.restaurantChooser.options;
+
+  return factory[type](options);
+}
+
+module.exports = {
+  create: create
+};

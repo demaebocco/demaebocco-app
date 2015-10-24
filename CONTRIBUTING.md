@@ -53,6 +53,20 @@ npm start
 }
 ```
 
+### ぐるなびレストラン検索APIを使ってお店を決める
+[ぐるなび Web Service - 新規アカウント発行](https://ssl.gnavi.co.jp/api/regist.php)からアカウントを作成し、アクセスキーを取得します。
+
+```json
+{
+  "restaurantChooser": {
+    "type": "gNaviRestaurantChooser",
+    "options": {
+      "accessKey": "Your access key"
+    }
+  }
+}
+```
+
 ## 備考
 現在は、Bocco の実機や店舗への電話はかけません。テキストメッセージのみのやり取りなので、すぐに試すことができます。
 

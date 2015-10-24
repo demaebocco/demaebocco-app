@@ -46,5 +46,9 @@ var analyze = function (text, callback) {
 };
 
 module.exports = {
-  analyze: analyze
+  analyze: function (text) {
+    return new Promise(function (resolve) {
+      analyze(text, resolve);
+    });
+  }
 };

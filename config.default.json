@@ -15,5 +15,10 @@
     "type": "niseFoodChooser",
     "options": {
     }
+  },
+  "restaurantChooser": {
+    "type": "niseRestaurantChooser",
+    "options": {
+    }
   }
 }

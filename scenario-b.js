@@ -8,15 +8,29 @@ var run = function (flow) {
   flow.once('response', function (text) {
     analyzer.analyze(text)
       .then(function (type) {
-        if (type.type === '外') {
-          flow.say('おすすめの' + type.food + 'があるよ？いってらっしゃい。');
-        } else if (type.type === '出前') {
-          flow.say('おすすめの' + type.food + 'があるよ？', true);
+        return flow.chooseRestaurant({
+          food: type.food
+        })
+          .then(function (data) {
+            // {
+            //   restaurant: レストラン情報...,
+            //   food: 食べ物情報...,
+            //   type: '外' or '出前'...
+            // }
+            data.type = type.type;
+            return data;
+          });
+      })
+      .then(function (info) {
+        if (info.type === '外') {
+          flow.say('今日は' + info.restaurant.nameKana + 'がオススメだよ。いってらっしゃい。');
+        } else if (info.type === '出前') {
+          flow.say('今日は' + info.restaurant.nameKana + 'がオススメだよ。注文する？', true);
           flow.once('response', function (text) {
             console.log(text);
             if (text.indexOf('はい') >= 0) {
 
-              flow.order('ご注文をお願いします。' + type.food + '一人前。さくらハウスで。30分なら1を、45分なら2を、60分なら3を、無理なら4を押してください。');
+              flow.order('ご注文をお願いします。' + info.food.name + '一人前。さくらハウスで。30分なら1を、45分なら2を、60分なら3を、無理なら4を押してください。');
               flow.once('ordered', function (minutes) {
                 if (minutes) {
                   flow.say(jaCodeMap.h2f(minutes + '分後に届くよ！'));
@@ -32,6 +46,9 @@ var run = function (flow) {
             }
           });
         }
+      })
+      .catch(function (error) {
+        console.log(error);
       });
   });
 };
