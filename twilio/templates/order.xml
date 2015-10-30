@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Gather timeout="10" numDigits="1">
+    <Say language="ja-jp"><%- message %></Say>
+  </Gather>
+</Response>
