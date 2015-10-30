@@ -77,7 +77,8 @@ app
     require('./showHtml.js').run(request, response, {
       bocco: bocco,
       restaurant: restaurant,
-      foodChooser: foodChooser
+      foodChooser: foodChooser,
+      restaurantChooser: restaurantChooser
     });
   })
   .get('/start', function (request, response) {

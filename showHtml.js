@@ -10,7 +10,8 @@ function run(request, response, behavior) {
   var html = template({
     boccoDescription: getDescription(behavior, 'bocco'),
     restaurantDescription: getDescription(behavior, 'restaurant'),
-    foodChooserDescription: getDescription(behavior, 'foodChooser')
+    foodChooserDescription: getDescription(behavior, 'foodChooser'),
+    restaurantChooserDescription: getDescription(behavior, 'restaurantChooser')
   });
 
   response.set('Content-Type', 'text/html');

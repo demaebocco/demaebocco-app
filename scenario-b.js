@@ -24,7 +24,7 @@ var run = function (flow) {
       .then(function (info) {
         if (info.type === '外') {
           flow.say('今日は' + info.restaurant.nameKana + 'がオススメだよ。いってらっしゃい。');
-        } else if (info.type === '出前') {
+        } else if (info.type === '出前' || info.type === '手前') {
           flow.say('今日は' + info.restaurant.nameKana + 'がオススメだよ。注文する？', true);
           flow.once('response', function (text) {
             console.log(text);

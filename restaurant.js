@@ -3,6 +3,7 @@
 var EventEmitter = require('events');
 var util = require('util');
 var calling = require('./calling.js');
+var fs = require('fs');
 
 function registerTwilio(Restaurant, app, callback) {
   app.post('/twilio/order', function (request, response) {
