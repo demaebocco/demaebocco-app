@@ -13,7 +13,7 @@ var twilio = require('twilio');
 function TwilioServer(options) {
   this.options_ = _.defaults(options || {}, {
     server: '',
-    port: 3000,
+    port: 3001,
     path: '/'
   });
   this.callbacks_ = {};
