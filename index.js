@@ -70,11 +70,16 @@ var makeFlow = function (bocco, restaurant, foodChooser, restaurantChooser) {
   return flow;
 };
 
+function runFlow(scenario) {
+  boccos.forEach(function (bocco) {
+    var flow = makeFlow(bocco, restaurant, foodChooser, restaurantChooser);
+    scenario.run(flow);
+  });
+}
+
 function start() {
   var app = express();
   app.use(bodyParser());
-
-  var flow;
 
   app
     .get('/', function (request, response) {
@@ -86,15 +91,11 @@ function start() {
       });
     })
     .get('/start', function (request, response) {
-      boccos.forEach(function (bocco) {
-        var flow = makeFlow(bocco, restaurant, foodChooser, restaurantChooser);
-        require('./scenario.js').run(flow);
-      });
+      runFlow(require('./scenario.js'));
       response.end();
     })
     .get('/start-b', function (request, response) {
-      flow = makeFlow(bocco, restaurant, foodChooser, restaurantChooser);
-      require('./scenario-b.js').run(flow);
+      runFlow(require('./scenario-b.js'));
       response.end();
     });
   restaurant.registerTwilio(app);
