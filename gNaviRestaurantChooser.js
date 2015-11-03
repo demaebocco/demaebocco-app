@@ -1,5 +1,6 @@
 'use strict';
 
+var config = require('./configReader.js').read().gNavi;
 var GNavi = require('node_gnavi');
 
 var select = function (restaurants) {
@@ -66,7 +67,8 @@ var chooseRestaurant = function (condition) {
     });
 };
 
-function GNaviRestaurantChooser(accessKey) {
+function GNaviRestaurantChooser(optAccessKey) {
+  var accessKey = optAccessKey || config.accessKey;
   this.gnavi_ = new GNavi(accessKey);
 }
 

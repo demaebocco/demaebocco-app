@@ -14,6 +14,10 @@ var factory = {
   'gNaviRestaurantChooser': function (options) {
     var GNaviRestaurantChooser = require('./gNaviRestaurantChooser.js');
     return new GNaviRestaurantChooser(options.accessKey);
+  },
+  'smartRestaurantChooser': function () {
+    var SmartRestaurantChooser = require('./smartRestaurantChooser.js');
+    return new SmartRestaurantChooser();
   }
 };
 
