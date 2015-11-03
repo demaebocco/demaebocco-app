@@ -4,13 +4,10 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var EventEmitter = require('events').EventEmitter;
 var _ = require('underscore');
-var boccoFactory = require('./boccoFactory.js');
 var bocco = require('./boccoFactory.js').create();
 var restaurant = require('./restaurantFactory.js').create();
 var foodChooser = require('./foodChooserFactory.js').create();
 var restaurantChooser = require('./restaurantChooserFactory.js').create();
-
-var boccos;
 
 var orderMessage;
 
@@ -71,7 +68,7 @@ var makeFlow = function (bocco, restaurant, foodChooser, restaurantChooser) {
 };
 
 function runFlow(scenario) {
-  boccos.forEach(function (bocco) {
+  bocco.getBoccos().forEach(function (bocco) {
     var flow = makeFlow(bocco, restaurant, foodChooser, restaurantChooser);
     scenario.run(flow);
   });
@@ -84,7 +81,7 @@ function start() {
   app
     .get('/', function (request, response) {
       require('./showHtml.js').run(request, response, {
-        bocco: boccos,
+        bocco: bocco,
         restaurant: restaurant,
         foodChooser: foodChooser,
         restaurantChooser: restaurantChooser
@@ -104,18 +101,7 @@ function start() {
   console.log('Server runningat http://localhost:3000');
 };
 
-require('./kintone/bocco.js')()
-  .then(function (infos) {
-    boccos = infos.map(function (info) {
-      console.log(info);
-      return boccoFactory.create(info.type, info.options);
-    });
-    boccos.getDescription = function () {
-      return boccos.map(function (bocco) {
-        return bocco.getDescription();
-      });
-    };
-  })
+bocco.ready()
   .then(function () {
     start();
   });

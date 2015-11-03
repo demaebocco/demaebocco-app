@@ -13,7 +13,6 @@ function getRecords () {
           return record.enabled.indexOf('enabled') >= 0;
         })
         .map(function (record) {
-          console.log(record);
           record.options = JSON.parse(record.options);
           return record;
         });
