@@ -5,8 +5,6 @@ var util = require('util');
 var MilkCocoa = require('milkcocoa');
 var Nise = require('./nise.js');
 
-var sender = 'DemaeBocco';
-
 function NiseBocco (name) {
   this.name = name;
 
