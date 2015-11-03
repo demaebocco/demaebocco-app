@@ -6,13 +6,17 @@ var kintone = new Kintone();
 var bocco = kintone.getApp('bocco');
 
 function getRecords () {
-  return bocco.getRecords(['name', 'type', 'options'])
+  return bocco.getRecords(['enabled', 'name', 'type', 'options'])
     .then(function (records) {
-      return records.map(function (record) {
-        console.log(record);
-        record.options = JSON.parse(record.options);
-        return record;
-      });
+      return records
+        .filter(function (record) {
+          return record.enabled.indexOf('enabled') >= 0;
+        })
+        .map(function (record) {
+          console.log(record);
+          record.options = JSON.parse(record.options);
+          return record;
+        });
     });
 }
 

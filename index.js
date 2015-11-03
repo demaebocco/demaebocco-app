@@ -107,6 +107,7 @@ function start() {
 require('./kintone/bocco.js')()
   .then(function (infos) {
     boccos = infos.map(function (info) {
+      console.log(info);
       return boccoFactory.create(info.type, info.options);
     });
     boccos.getDescription = function () {
