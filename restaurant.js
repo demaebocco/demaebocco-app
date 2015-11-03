@@ -2,43 +2,42 @@
 
 var EventEmitter = require('events');
 var util = require('util');
-var calling = require('./calling.js');
-var fs = require('fs');
+var TwilioServer = require('./twilio/twilioServer.js');
 
-function registerTwilio(Restaurant, app, callback) {
-  app.post('/twilio/order', function (request, response) {
-    console.log('POST /twilio/order');
-
-    var data = request.body;
-    if (data.Digits) {
-      console.log(data.Digits);
-
-      callback(data.Digits);
-    }
-
-    var template = _.template(fs.readFileSync('order.xml', 'utf8'));
-    var tml = template({message: Restaurant.orderMessage});
-    response.send(tml);
-  });
-}
-
-function Restaurant(name, app) {
-  this.name = name;
+function Restaurant(options) {
+  this.options_ = options;
 }
 
 util.inherits(Restaurant, EventEmitter);
 
-Restaurant.prototype.registerTwilio = function (app) {
-  var that = this;
+Restaurant.prototype.registerTwilio = function () {
+  var server = new TwilioServer(this.options_);
+  server.start();
 
-  registerTwilio(this, app, function (text) {
-    that.emit('response', text);
-  });
+  this.server_ = server;
 };
 
 Restaurant.prototype.order = function (text) {
-  this.orderMessage = text;
-  calling();
+  var server = this.server_;
+  var twiml = server.twiml();
+  var that = this;
+
+  console.log(this.options_);
+
+  server
+    .dial(this.options_.to)
+    .then(twiml.loop(text))
+    .then(function (result) {
+      console.log(result.Digits);
+      that.emit('response', result.Digits);
+      return result;
+    })
+    .then(twiml.hangup());
+};
+
+Restaurant.prototype.getDescription = function () {
+  var urlEncode = encodeURIComponent(this.name);
+  return '設定ファイルに記述された店舗に電話をかけます。';
 };
 
 module.exports = Restaurant;
