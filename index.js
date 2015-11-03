@@ -4,10 +4,13 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var EventEmitter = require('events').EventEmitter;
 var _ = require('underscore');
+var boccoFactory = require('./boccoFactory.js');
 var bocco = require('./boccoFactory.js').create();
 var restaurant = require('./restaurantFactory.js').create();
 var foodChooser = require('./foodChooserFactory.js').create();
 var restaurantChooser = require('./restaurantChooserFactory.js').create();
+
+var boccos;
 
 var orderMessage;
 
@@ -67,31 +70,50 @@ var makeFlow = function (bocco, restaurant, foodChooser, restaurantChooser) {
   return flow;
 };
 
-var app = express();
-app.use(bodyParser());
+function start() {
+  var app = express();
+  app.use(bodyParser());
 
-var flow;
+  var flow;
 
-app
-  .get('/', function (request, response) {
-    require('./showHtml.js').run(request, response, {
-      bocco: bocco,
-      restaurant: restaurant,
-      foodChooser: foodChooser,
-      restaurantChooser: restaurantChooser
+  app
+    .get('/', function (request, response) {
+      require('./showHtml.js').run(request, response, {
+        bocco: boccos,
+        restaurant: restaurant,
+        foodChooser: foodChooser,
+        restaurantChooser: restaurantChooser
+      });
+    })
+    .get('/start', function (request, response) {
+      boccos.forEach(function (bocco) {
+        var flow = makeFlow(bocco, restaurant, foodChooser, restaurantChooser);
+        require('./scenario.js').run(flow);
+      });
+      response.end();
+    })
+    .get('/start-b', function (request, response) {
+      flow = makeFlow(bocco, restaurant, foodChooser, restaurantChooser);
+      require('./scenario-b.js').run(flow);
+      response.end();
     });
-  })
-  .get('/start', function (request, response) {
-    flow = makeFlow(bocco, restaurant, foodChooser, restaurantChooser);
-    require('./scenario.js').run(flow);
-    response.end();
-  })
-  .get('/start-b', function (request, response) {
-    flow = makeFlow(bocco, restaurant, foodChooser, restaurantChooser);
-    require('./scenario-b.js').run(flow);
-    response.end();
-  });
-restaurant.registerTwilio(app);
+  restaurant.registerTwilio(app);
 
-app.listen(3000, '0.0.0.0');
-console.log('Server runningat http://localhost:3000');
+  app.listen(3000, '0.0.0.0');
+  console.log('Server runningat http://localhost:3000');
+};
+
+require('./kintone/bocco.js')()
+  .then(function (infos) {
+    boccos = infos.map(function (info) {
+      return boccoFactory.create(info.type, info.options);
+    });
+    boccos.getDescription = function () {
+      return boccos.map(function (bocco) {
+        return bocco.getDescription();
+      });
+    };
+  })
+  .then(function () {
+    start();
+  });
