@@ -8,14 +8,17 @@ var getType = function (words) {
   if (index >= 0) {
     return {
       index: index,
-      type: '外'
+      delivery: false
     };
   }
   index = words.indexOf('出前');
+  if (index < 0) {
+    index = words.indexOf('手前');
+  }
   if (index >= 0) {
     return {
       index: index,
-      type: '出前'
+      delivery: true
     };
   }
 
