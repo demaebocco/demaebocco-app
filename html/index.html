@@ -13,8 +13,13 @@
         $.get('start-b');
       }
 
+      function startC() {
+        $.get('start-c');
+      }
+
       $(document).on('click', '#start', start);
       $(document).on('click', '#start-b', startB);
+      $(document).on('click', '#start-c', startC);
     </script>
   </head>
   <body>
@@ -35,6 +40,14 @@
       <p>
         ぐるなびレストラン検索APIを使って、近所のおすすめの店を教えてくれる。
         <button id="start-b" type="button">お昼どうする?</button>
+      </p>
+    </section>
+
+    <section>
+      <h3>実験中</h3>
+      <p>
+        ぐるなびレストラン検索APIとkintoneを使って、近所のおすすめの店を教えてくれる。
+        <button id="start-c" type="button">お昼どうする?</button>
       </p>
     </section>
 

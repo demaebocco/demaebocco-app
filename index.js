@@ -94,6 +94,9 @@ function start() {
     .get('/start-b', function (request, response) {
       runFlow(require('./scenario-b.js'));
       response.end();
+    })
+    .get('/start-c', function (request, response) {
+      runFlow(require('./scenario-c.js'));
     });
   restaurant.registerTwilio(app);
 

@@ -5,7 +5,7 @@ var Kintone = require('./kintone.js');
 var kintone = new Kintone();
 var bocco = kintone.getApp('bocco');
 
-function getRecords () {
+function getRecords() {
   return bocco.getRecords(['enabled', 'name', 'type', 'options'])
     .then(function (records) {
       return records
