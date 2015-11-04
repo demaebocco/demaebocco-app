@@ -7,9 +7,17 @@ var factory = {
     var NiseRestaurantChooser = require('./niseRestaurantChooser.js');
     return new NiseRestaurantChooser();
   },
+  'kintoneRestaurantChooser': function () {
+    var KintoneRestaurantChooser = require('./kintoneRestaurantChooser.js');
+    return new KintoneRestaurantChooser();
+  },
   'gNaviRestaurantChooser': function (options) {
     var GNaviRestaurantChooser = require('./gNaviRestaurantChooser.js');
     return new GNaviRestaurantChooser(options.accessKey);
+  },
+  'smartRestaurantChooser': function () {
+    var SmartRestaurantChooser = require('./smartRestaurantChooser.js');
+    return new SmartRestaurantChooser();
   }
 };
 

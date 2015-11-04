@@ -3,7 +3,10 @@
     "type": "niseBocco",
     "options": {
       "name": "#Boccoさくらハウス"
-    }
+    },
+    "name": "さくらハウス",
+    "address": "鹿児島県鹿児島市荒田1丁目16-7 イイテラス403",
+    "tel": "00000000000"
   },
   "restaurant": {
     "type": "niseRestaurant",

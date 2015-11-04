@@ -2,7 +2,7 @@
 
 var EventEmitter = require('events');
 var util = require('util');
-var bocco = require('DemaeBocco');
+var boccoCreate = require('DemaeBocco').create;
 
 function Bocco(roomId, accessToken) {
   var that = this;
@@ -10,14 +10,12 @@ function Bocco(roomId, accessToken) {
   if (roomId && accessToken) {
     this.roomId = roomId;
 
-    bocco
-      .setRoomId(roomId)
-      .setAccessToken(accessToken);
+    this.bocco_ = boccoCreate(roomId, accessToken);
   }
 
-  bocco.getMessageMediaAudio(function (data) {
+  this.bocco_.getMessageMediaAudio(function (data) {
     setTimeout(function () {
-      bocco.wav2text(data.audio,
+      that.bocco_.wav2text(data.audio,
                      'AIzaSyAFltwcHvvnDCYDwo6fezLntFeHFrSXL70',
                      function (text) {
                        that.emit('response', text);
@@ -29,7 +27,7 @@ function Bocco(roomId, accessToken) {
 util.inherits(Bocco, EventEmitter);
 
 Bocco.prototype.send = function (text) {
-  bocco.postMessageText(text, function () {});
+  this.bocco_.postMessageText(text, function () {});
 };
 
 Bocco.prototype.getDescription = function () {

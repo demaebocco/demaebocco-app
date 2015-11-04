@@ -9,23 +9,25 @@ var run = function (flow) {
     analyzer.analyze(text)
       .then(function (type) {
         return flow.chooseRestaurant({
-          food: type.food
+          food: type.food,
+          delivery: type.delivery
         })
           .then(function (data) {
             // {
             //   restaurant: レストラン情報...,
             //   food: 食べ物情報...,
-            //   type: '外' or '出前'...
+            //   delivery: true or false...
             // }
-            data.type = type.type;
+            data.delivery = type.delivery;
             return data;
           });
       })
       .then(function (info) {
-        if (info.type === '外') {
+        if (!info.delivery) {
           flow.say('今日は' + info.restaurant.nameKana + 'がオススメだよ。いってらっしゃい。');
-        } else if (info.type === '出前' || info.type === '手前') {
-          flow.say('今日は' + info.restaurant.nameKana + 'がオススメだよ。注文する？', true);
+        } else {
+          var foodName = info.food.kanaName || info.food.name;
+          flow.say('今日は' + foodName + 'がオススメだよ。注文する？', true);
           flow.once('response', function (text) {
             console.log(text);
             if (text.indexOf('はい') >= 0) {

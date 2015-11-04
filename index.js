@@ -5,7 +5,8 @@ var bodyParser = require('body-parser');
 var EventEmitter = require('events').EventEmitter;
 var _ = require('underscore');
 var bocco = require('./boccoFactory.js').create();
-var restaurant = require('./restaurantFactory.js').create();
+var RestaurantFactory = require('./restaurantFactory.js');
+var restaurant = RestaurantFactory.create();
 var foodChooser = require('./foodChooserFactory.js').create();
 var restaurantChooser = require('./restaurantChooserFactory.js').create();
 
@@ -15,6 +16,7 @@ var makeFlow = function (bocco, restaurant, foodChooser, restaurantChooser) {
   var events = {};
 
   var flow = new EventEmitter();
+  flow.bocco = bocco;
   flow.say = function (text, isCallback) {
     console.log('SAY: ' + text); // eslint-disable-line no-console
     bocco.send(text);
@@ -26,8 +28,12 @@ var makeFlow = function (bocco, restaurant, foodChooser, restaurantChooser) {
       });
     }
   };
-  flow.order = function (text) {
+  flow.order = function (text, type, options) {
     var that = this;
+
+    if (type) {
+      restaurant = RestaurantFactory.create(type, options);
+    }
 
     console.log('ORDER: ' + text); // eslint-disable-line no-console
 
@@ -67,31 +73,44 @@ var makeFlow = function (bocco, restaurant, foodChooser, restaurantChooser) {
   return flow;
 };
 
-var app = express();
-app.use(bodyParser());
-
-var flow;
-
-app
-  .get('/', function (request, response) {
-    require('./showHtml.js').run(request, response, {
-      bocco: bocco,
-      restaurant: restaurant,
-      foodChooser: foodChooser,
-      restaurantChooser: restaurantChooser
-    });
-  })
-  .get('/start', function (request, response) {
-    flow = makeFlow(bocco, restaurant, foodChooser, restaurantChooser);
-    require('./scenario.js').run(flow);
-    response.end();
-  })
-  .get('/start-b', function (request, response) {
-    flow = makeFlow(bocco, restaurant, foodChooser, restaurantChooser);
-    require('./scenario-b.js').run(flow);
-    response.end();
+function runFlow(scenario) {
+  bocco.getBoccos().forEach(function (bocco) {
+    var flow = makeFlow(bocco, restaurant, foodChooser, restaurantChooser);
+    scenario.run(flow);
   });
-restaurant.registerTwilio(app);
+}
 
-app.listen(3000, '0.0.0.0');
-console.log('Server runningat http://localhost:3000');
+function start() {
+  var app = express();
+  app.use(bodyParser());
+
+  app
+    .get('/', function (request, response) {
+      require('./showHtml.js').run(request, response, {
+        bocco: bocco,
+        restaurant: restaurant,
+        foodChooser: foodChooser,
+        restaurantChooser: restaurantChooser
+      });
+    })
+    .get('/start', function (request, response) {
+      runFlow(require('./scenario.js'));
+      response.end();
+    })
+    .get('/start-b', function (request, response) {
+      runFlow(require('./scenario-b.js'));
+      response.end();
+    })
+    .get('/start-c', function (request, response) {
+      runFlow(require('./scenario-c.js'));
+    });
+  restaurant.registerTwilio(app);
+
+  app.listen(3000, '0.0.0.0');
+  console.log('Server runningat http://localhost:3000');
+};
+
+bocco.ready()
+  .then(function () {
+    start();
+  });
