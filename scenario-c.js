@@ -116,8 +116,11 @@ function run(flow) {
             return flow.say('そうかあ');
           }
 
+          var type = info.restaurant.type;
+          var options = info.restaurant.options;
+
           return flow
-            .order('ご注文をお願いします。' + info.food.name + '一人前。さくらハウスで。30分なら1を、45分なら2を、60分なら3を、無理なら4を押してください。')
+            .order('ご注文をお願いします。' + info.food.name + '一人前。さくらハウスで。30分なら1を、45分なら2を、60分なら3を、無理なら4を押してください。', type, options)
             .then(function (minutes) {
               if (!minutes) {
                 return flow.say('たまには外に出ろ');

@@ -5,7 +5,8 @@ var bodyParser = require('body-parser');
 var EventEmitter = require('events').EventEmitter;
 var _ = require('underscore');
 var bocco = require('./boccoFactory.js').create();
-var restaurant = require('./restaurantFactory.js').create();
+var RestaurantFactory = require('./restaurantFactory.js');
+var restaurant = RestaurantFactory.create();
 var foodChooser = require('./foodChooserFactory.js').create();
 var restaurantChooser = require('./restaurantChooserFactory.js').create();
 
@@ -26,8 +27,12 @@ var makeFlow = function (bocco, restaurant, foodChooser, restaurantChooser) {
       });
     }
   };
-  flow.order = function (text) {
+  flow.order = function (text, type, options) {
     var that = this;
+
+    if (type) {
+      restaurant = RestaurantFactory.create(type, options);
+    }
 
     console.log('ORDER: ' + text); // eslint-disable-line no-console
 
