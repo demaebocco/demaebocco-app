@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('underscore');
 var config = require('./configReader.js').read();
 
 var factory = {
@@ -17,7 +18,7 @@ var factory = {
   }
 };
 
-function create(optType, optOptions) {
+function create(optType, optOptions, optConfig) {
   var type = optType || config.bocco.type;
   var options = optOptions || config.bocco.options;
 
@@ -33,6 +34,8 @@ function create(optType, optOptions) {
       return [bocco];
     };
   }
+
+  bocco.config = optConfig || config.bocco;
 
   return bocco;
 }

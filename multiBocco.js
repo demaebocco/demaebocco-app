@@ -11,7 +11,7 @@ MultiBocco.prototype.ready = function () {
   return require('./kintone/bocco.js')()
     .then(function (infos) {
       return infos.map(function (info) {
-        return boccoFactory.create(info.type, info.options);
+        return boccoFactory.create(info.type, info.options, info);
       });
     })
     .then((function (boccos) {

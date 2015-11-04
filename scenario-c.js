@@ -3,6 +3,10 @@
 var jaCodeMap = require('jaCodeMap');
 var analyzer = require('./analyzer.js');
 
+function slow(tel) {
+  return tel.split('').join(' ') + ' ';
+}
+
 function decorateFlow(flow) {
   return {
     say: function (text, isCallback) {
@@ -38,7 +42,8 @@ function decorateFlow(flow) {
     },
     analyze: function () {
       return analyzer.analyze.apply(analyzer, Array.prototype.slice.apply(arguments));
-    }
+    },
+    bocco: flow.bocco
   };
 }
 
@@ -61,6 +66,7 @@ function wrap(flow, optProise) {
   promise.order = wrapMethod(flow.order);
   promise.timeout = wrapMethod(flow.timeout);
   promise.analyze = wrapMethod(flow.analyze);
+  promise.bocco = flow.bocco;
 
   promise.then = function () {
     return wrap(flow, then.apply(promise, Array.prototype.slice.apply(arguments)));
@@ -118,9 +124,12 @@ function run(flow) {
 
           var type = info.restaurant.type;
           var options = info.restaurant.options;
+          var name = flow.bocco.config.name;
+          var address = flow.bocco.config.address;
+          var tel = flow.bocco.config.tel;
 
           return flow
-            .order('ご注文をお願いします。' + info.food.name + '一人前。さくらハウスで。30分なら1を、45分なら2を、60分なら3を、無理なら4を押してください。', type, options)
+            .order('ご注文をお願いします。' + info.food.name + '。' + address + '、の、' + name + 'まで。電話番号は' + slow(tel) + 'です。30分なら1を、45分なら2を、60分なら3を、無理なら4を押してください。', type, options)
             .then(function (minutes) {
               if (!minutes) {
                 return flow.say('たまには外に出ろ');

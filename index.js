@@ -16,6 +16,7 @@ var makeFlow = function (bocco, restaurant, foodChooser, restaurantChooser) {
   var events = {};
 
   var flow = new EventEmitter();
+  flow.bocco = bocco;
   flow.say = function (text, isCallback) {
     console.log('SAY: ' + text); // eslint-disable-line no-console
     bocco.send(text);

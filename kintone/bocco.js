@@ -6,7 +6,14 @@ var kintone = new Kintone();
 var bocco = kintone.getApp('bocco');
 
 function getRecords() {
-  return bocco.getRecords(['enabled', 'name', 'type', 'options'])
+  return bocco.getRecords([
+    'enabled',
+    'name',
+    'address',
+    'tel',
+    'type',
+    'options'
+  ])
     .then(function (records) {
       return records
         .filter(function (record) {
