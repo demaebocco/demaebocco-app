@@ -5,13 +5,14 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
 var twilio = require('twilio');
+var config = require('../configReader.js').read().twilio;
 
 /**
  * Create Twilio Server
  * @class
  */
 function TwilioServer(options) {
-  this.options_ = _.defaults(options || {}, {
+  this.options_ = _.defaults(options || config, {
     server: '',
     port: 3001,
     path: '/'
@@ -55,7 +56,7 @@ TwilioServer.prototype.start = function () {
 
 TwilioServer.prototype.promise = function (sid, name, makeTwiml) {
   var defer = this.defers_[sid] = {};
-  
+
   return new Promise(function (resolve, reject) {
     defer.resolve = resolve;
     defer.reject = reject;
@@ -74,7 +75,7 @@ TwilioServer.prototype.dial = function (tel) {
 
 TwilioServer.prototype.dial_ = function (tel) {
   var options = this.options_;
-  
+
   return new Promise(function (resolve, reject) {
     var client = twilio(options.accountSid, options.authToken);
 
@@ -97,7 +98,7 @@ TwilioServer.prototype.dial_ = function (tel) {
 
 TwilioServer.prototype.twiml = function () {
   var server = this;
-  
+
   return {
     make: function (name, factory) {
       return function (result) {

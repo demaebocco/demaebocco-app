@@ -9,7 +9,6 @@ function run(request, response, behavior) {
   var template = _.template(fs.readFileSync(htmlPath, 'utf8'));
   var html = template({
     boccoDescription: getDescription(behavior, 'bocco'),
-    restaurantDescription: getDescription(behavior, 'restaurant'),
     foodChooserDescription: getDescription(behavior, 'foodChooser'),
     restaurantChooserDescription: getDescription(behavior, 'restaurantChooser')
   });

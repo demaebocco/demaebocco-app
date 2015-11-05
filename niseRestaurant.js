@@ -21,6 +21,7 @@ function NiseRestaurant (name) {
 util.inherits(NiseRestaurant, EventEmitter);
 
 NiseRestaurant.prototype.registerTwilio = function () {
+  return Promise.resolve();
 };
 
 NiseRestaurant.prototype.order = function (text) {

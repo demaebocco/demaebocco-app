@@ -10,9 +10,17 @@ function Restaurant(options) {
 
 util.inherits(Restaurant, EventEmitter);
 
-Restaurant.prototype.registerTwilio = function () {
-  var server = new TwilioServer(this.options_);
-  server.start();
+Restaurant.prototype.registerTwilio = function (optServer) {
+  var server;
+  var promise;
+
+  if (optServer) {
+    server = optServer;
+    promise = Promise.resolve();
+  } else {
+    server = new TwilioServer(this.options_);
+    promise = server.start();
+  }
 
   this.server_ = server;
 };

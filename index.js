@@ -6,13 +6,14 @@ var EventEmitter = require('events').EventEmitter;
 var _ = require('underscore');
 var bocco = require('./boccoFactory.js').create();
 var RestaurantFactory = require('./restaurantFactory.js');
-var restaurant = RestaurantFactory.create();
 var foodChooser = require('./foodChooserFactory.js').create();
 var restaurantChooser = require('./restaurantChooserFactory.js').create();
+var TwilioServer = require('./twilio/twilioServer.js');
+var twilioServer = new TwilioServer();
 
 var orderMessage;
 
-var makeFlow = function (bocco, restaurant, foodChooser, restaurantChooser) {
+var makeFlow = function (bocco, foodChooser, restaurantChooser) {
   var events = {};
 
   var flow = new EventEmitter();
@@ -32,7 +33,8 @@ var makeFlow = function (bocco, restaurant, foodChooser, restaurantChooser) {
     var that = this;
 
     if (type) {
-      restaurant = RestaurantFactory.create(type, options);
+      var restaurant = RestaurantFactory.create(type, options);
+      restaurant.registerTwilio(twilioServer);
     }
 
     console.log('ORDER: ' + text); // eslint-disable-line no-console
@@ -75,7 +77,7 @@ var makeFlow = function (bocco, restaurant, foodChooser, restaurantChooser) {
 
 function runFlow(scenario) {
   bocco.getBoccos().forEach(function (bocco) {
-    var flow = makeFlow(bocco, restaurant, foodChooser, restaurantChooser);
+    var flow = makeFlow(bocco, foodChooser, restaurantChooser);
     scenario.run(flow);
   });
 }
@@ -88,7 +90,6 @@ function start() {
     .get('/', function (request, response) {
       require('./showHtml.js').run(request, response, {
         bocco: bocco,
-        restaurant: restaurant,
         foodChooser: foodChooser,
         restaurantChooser: restaurantChooser
       });
@@ -104,13 +105,12 @@ function start() {
     .get('/start-c', function (request, response) {
       runFlow(require('./scenario-c.js'));
     });
-  restaurant.registerTwilio(app);
 
   app.listen(3000, '0.0.0.0');
   console.log('Server runningat http://localhost:3000');
 };
 
-bocco.ready()
+Promise.all([bocco.ready(), twilioServer.start()])
   .then(function () {
     start();
   });
