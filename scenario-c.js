@@ -85,6 +85,10 @@ function run(flow) {
       return flow.analyze(text);
     })
     .then(function (type) {
+      if (!type) {
+        return type;
+      }
+
       return flow.chooseRestaurant({
         food: type.food,
         delivery: type.delivery

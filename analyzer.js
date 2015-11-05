@@ -1,32 +1,51 @@
+'use strict';
+
+var _ = require('underscore');
 var WordSplitter = require('./wordSplitter.js');
 
 var splitter = new WordSplitter('dj0zaiZpPUNna3RLOUE5Rk1HTSZzPWNvbnN1bWVyc2VjcmV0Jng9OWQ-');
 
-var getType = function (words) {
+function parse(words) {
   console.log(words);
-  var index = words.indexOf('外');
-  if (index >= 0) {
-    return {
-      index: index,
-      delivery: false
-    };
+
+  var places = ['外', '出前', '手前'];
+
+  // 外でラーメンが食べたい -> {delivery: false, food: 'ラーメン'}
+  // カレー -> {delivery: false, food: 'カレー'}
+  // 出前で寿司を -> {delivery: true, food: '寿司'}
+  // 寿司を出前でお願い -> {delivery: true, food: '寿司}
+
+  for (var i = 0; i < places.length; i++) {
+    var place = places[i];
+
+    var index = words.indexOf(place);
+    if (index >= 0) {
+      var p = words[index];
+      var temp = words.slice();
+      temp.splice(index, 1);
+
+      return {
+        delivery: p !== '外',
+        food: _.first(temp)
+      };
+    }
   }
-  index = words.indexOf('出前');
-  if (index < 0) {
-    index = words.indexOf('手前');
-  }
-  if (index >= 0) {
+
+  var food = _.first(words);
+  if (food) {
     return {
-      index: index,
-      delivery: true
+      delivery: false,
+      food: food
     };
   }
 
   return false;
-};
+}
 
 var analyze = function (text, callback) {
   splitter.split(text, function (words) {
+    words = _.isArray(words) ? words : [words];
+
     // 名詞だけ抽出
     var nouns = words
           .filter(function (word) {
@@ -36,13 +55,7 @@ var analyze = function (text, callback) {
             return word.surface;
           });
 
-    // '外' とか '出前' を探す
-    var type = getType(nouns);
-    var food;
-    if (type) {
-      // '外' とか '出前' とかの次の名詞を食べ物と判断する
-      type.food = nouns[type.index + 1];
-    }
+    var type = parse(nouns);
 
     callback(type);
   });
