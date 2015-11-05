@@ -104,6 +104,7 @@ function start() {
     })
     .get('/start-c', function (request, response) {
       runFlow(require('./scenario-c.js'));
+      response.end();
     });
 
   app.listen(3000, '0.0.0.0');
