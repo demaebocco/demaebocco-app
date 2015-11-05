@@ -126,10 +126,14 @@ function run(flow) {
           var options = info.restaurant.options;
           var name = flow.bocco.config.name;
           var address = flow.bocco.config.address;
+          var place = address + 'の' + name;
           var tel = flow.bocco.config.tel;
 
+          var slowTel = slow(tel);
+          var message = 'こちらは自動出前注文システム出前ボッコです。最初に電話番号を、つづけてお届け先と注文内容をお伝えいたします。0 を押すと、最初から再生いたします。電話番号、' + slowTel + '。繰り返します。電話番号、' + slowTel + '。お届け先は' + place + '鹿児島県鹿児島市さくらハウス。繰り返します。お届け先は' + place + '。メニューは、' + info.food.name + 'を一つ。以上です。お届け予定時間が30分なら1を、45分なら2を、60分なら3を、無理なら4を、最初からもう一度聞くには0を押してください。';
+
           return flow
-            .order('ご注文をお願いします。' + info.food.name + '。' + address + '、の、' + name + 'まで。電話番号は' + slow(tel) + 'です。30分なら1を、45分なら2を、60分なら3を、無理なら4を押してください。', type, options)
+            .order(message, type, options)
             .then(function (minutes) {
               if (!minutes) {
                 return flow.say('たまには外に出ろ');
