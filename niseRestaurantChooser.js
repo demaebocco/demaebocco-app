@@ -3,8 +3,8 @@
 var chooseRestaurant = function (callback) {
   callback({
     restaurant: {
-      name: '銀のさら宇宿店',
-      nameKana: 'ギンノサラウスキテン'
+      name: '銀のさら政倉店',
+      nameKana: 'ギンノサラマサクラテン'
     },
     food: {
       name: '寿司'
