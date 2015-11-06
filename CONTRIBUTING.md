@@ -1,5 +1,7 @@
 # 出前 Bocco 開発者向け
 ## セットアップ
+Node.js v4.0.0 以降が必要です。
+
 ```
 git clone git@github.com:demaebocco/demaebocco-app.git
 cd demaebocco-app

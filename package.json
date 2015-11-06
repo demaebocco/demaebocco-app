@@ -9,6 +9,9 @@
   },
   "author": "",
   "license": "ISC",
+  "engine": {
+    "node": ">=4.0.0"
+  },
   "eslintConfig": {
     "env": {
       "node": true,
