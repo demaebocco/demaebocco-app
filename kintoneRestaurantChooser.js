@@ -24,14 +24,24 @@ function convert(record) {
 }
 
 KintoneRestaurantChooser.prototype.choose = function (condition) {
+      console.log(condition);
   return require('./kintone/menu.js')()
     .then(function (records) {
-      var filtered = records
-            .filter(function (record) {
-              return record.ctg === condition.food;
-            })
-            .map(convert);
+      var filtered = records;
+      console.log('----------');
+      console.log(condition);
+      console.log(filtered);
 
+      // kintone menu アプリから食べ物・店舗を取得
+      // 食べ物が指定されていた時はそれだけを抽出
+      // 食べ物が指定なしの時はすべてが対象
+      if (condition.food) {
+        filtered = filtered
+          .filter(function (record) {
+            return record.ctg === condition.food;
+          });
+      }
+      filtered = filtered.map(convert);
       return select(filtered);
     });
 };

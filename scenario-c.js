@@ -85,6 +85,7 @@ function run(flow) {
       return flow.analyze(text);
     })
     .then(function (type) {
+      console.log(type);
       if (!type) {
         return type;
       }

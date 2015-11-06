@@ -43,6 +43,14 @@ function parse(words) {
 }
 
 var analyze = function (text, callback) {
+  if (text === 'はい' || text === '食べる' || text === '食べたい') {
+    callback({
+      delivery: true
+    });
+
+    return;
+  }
+
   splitter.split(text, function (words) {
     words = _.isArray(words) ? words : [words];
 
