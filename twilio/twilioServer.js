@@ -11,8 +11,8 @@ var config = require('../configReader.js').read().twilio;
  * Create Twilio Server
  * @class
  */
-function TwilioServer(options) {
-  this.options_ = _.defaults(options || config, {
+function TwilioServer(optOptions) {
+  this.options_ = _.extend({}, config, optOptions, {
     server: '',
     port: 3001,
     path: '/'
