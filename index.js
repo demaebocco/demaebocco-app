@@ -94,14 +94,6 @@ function start() {
         restaurantChooser: restaurantChooser
       });
     })
-    .get('/start', function (request, response) {
-      runFlow(require('./scenario.js'));
-      response.end();
-    })
-    .get('/start-b', function (request, response) {
-      runFlow(require('./scenario-b.js'));
-      response.end();
-    })
     .get('/start-c', function (request, response) {
       runFlow(require('./scenario-c.js'));
       response.end();

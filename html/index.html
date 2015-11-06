@@ -5,46 +5,18 @@
     <title>出前 Bocco</title>
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script>
-      function start() {
-        $.get('start');
-      }
-
-      function startB() {
-        $.get('start-b');
-      }
-
       function startC() {
         $.get('start-c');
       }
 
-      $(document).on('click', '#start', start);
-      $(document).on('click', '#start-b', startB);
       $(document).on('click', '#start-c', startC);
     </script>
   </head>
   <body>
     <h1>出前 Bocco</h1>
 
-    <h2>パターン</h2>
-
     <section>
-      <h3>お昼どうする? オリジナル</h3>
-      <p>
-        お昼どうする? 美味しいとんかつがあるよ? 注文の流れ。
-        <button id="start" type="button">お昼どうする?</button>
-      </p>
-    </section>
-
-    <section>
-      <h3>近所のレストランを教える機能</h3>
-      <p>
-        ぐるなびレストラン検索APIを使って、近所のおすすめの店を教えてくれる。
-        <button id="start-b" type="button">お昼どうする?</button>
-      </p>
-    </section>
-
-    <section>
-      <h3>実験中</h3>
+      <h3>お昼どうする? 正式版</h3>
       <p>
         ぐるなびレストラン検索APIとkintoneを使って、近所のおすすめの店を教えてくれる。
         <button id="start-c" type="button">お昼どうする?</button>
